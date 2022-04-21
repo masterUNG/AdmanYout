@@ -1,4 +1,5 @@
 import 'package:admanyout/models/post_model.dart';
+import 'package:admanyout/states/add_photo.dart';
 import 'package:admanyout/utility/my_constant.dart';
 import 'package:admanyout/widgets/shop_progress.dart';
 import 'package:admanyout/widgets/show_icon_button.dart';
@@ -46,7 +47,17 @@ class _MainHomeState extends State<MainHome> {
         title: Text(MyConstant.appName),
         foregroundColor: Colors.white,
         backgroundColor: Colors.black,
-        actions: [ShowIconButton(iconData: Icons.add_box_outlined, pressFunc: (){})],
+        actions: [
+          ShowIconButton(
+            iconData: Icons.add_box_outlined,
+            pressFunc: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const AddPhoto(),
+              ),
+            ),
+          ),
+        ],
       ),
       body: load
           ? const ShowProgress()
@@ -135,8 +146,12 @@ class _MainHomeState extends State<MainHome> {
                             pressFunc: () {}),
                       ],
                     ),
-                    const SizedBox(height: 16,),
-                    const Divider(color: Colors.grey,),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    const Divider(
+                      color: Colors.grey,
+                    ),
                   ],
                 ),
               );
