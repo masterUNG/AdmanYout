@@ -6,7 +6,7 @@ class PostModel {
   final String uidPost;
   final List<String> urlPaths;
   final String article;
-  final String link;
+  final List<String> link;
   final String nameButton;
   final String name;
   PostModel({
@@ -34,7 +34,7 @@ class PostModel {
       uidPost: (map['uidPost'] ?? '') as String,
       urlPaths: List<String>.from(map['urlPaths']),
       article: (map['article'] ?? '') as String,
-      link: (map['link'] ?? '') as String,
+      link: List<String>.from(map['link']),
       nameButton: (map['nameButton'] ?? '') as String,
       name: (map['name'] ?? '') as String,
     );
