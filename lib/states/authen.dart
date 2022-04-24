@@ -1,9 +1,11 @@
+import 'package:admanyout/states/create_new_account.dart';
 import 'package:admanyout/states/main_home.dart';
 import 'package:admanyout/utility/my_constant.dart';
 import 'package:admanyout/utility/my_dialog.dart';
 import 'package:admanyout/widgets/show_button.dart';
 import 'package:admanyout/widgets/show_form.dart';
 import 'package:admanyout/widgets/show_text.dart';
+import 'package:admanyout/widgets/show_text_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -20,6 +22,7 @@ class _AuthenState extends State<Authen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       body: GestureDetector(
         onTap: () => FocusScope.of(context).requestFocus(FocusScopeNode()),
         behavior: HitTestBehavior.opaque,
@@ -50,6 +53,7 @@ class _AuthenState extends State<Authen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
+                    ShowTextButton(label: 'Forgot Password', pressFunc: () {}),
                     ShowButton(
                       label: 'Login',
                       pressFunc: () {
@@ -67,7 +71,23 @@ class _AuthenState extends State<Authen> {
                     ),
                   ],
                 ),
-              )
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const ShowText(label: 'Non Account ? '),
+                  ShowTextButton(
+                    label: 'Create New Account',
+                    pressFunc: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const CreateNewAccount(),
+                          ));
+                    },
+                  )
+                ],
+              ),
             ],
           ),
         ),

@@ -1,7 +1,9 @@
 import 'package:admanyout/models/post_model.dart';
 import 'package:admanyout/states/add_photo.dart';
+import 'package:admanyout/states/authen.dart';
 import 'package:admanyout/utility/my_constant.dart';
 import 'package:admanyout/widgets/shop_progress.dart';
+import 'package:admanyout/widgets/show_button.dart';
 import 'package:admanyout/widgets/show_icon_button.dart';
 import 'package:admanyout/widgets/show_image.dart';
 import 'package:admanyout/widgets/show_outline_button.dart';
@@ -21,6 +23,8 @@ class _MainHomeState extends State<MainHome> {
   var user = FirebaseAuth.instance.currentUser;
   var postModels = <PostModel>[];
   bool load = true;
+  var titles = <String>['แก้ไขโปรไฟร์', 'Sign Out'];
+  String? title;
 
   @override
   void initState() {
@@ -48,7 +52,26 @@ class _MainHomeState extends State<MainHome> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Text(MyConstant.appName),
+        title: DropdownButton<dynamic>(
+            value: title,
+            items: titles
+                .map(
+                  (e) => DropdownMenuItem(
+                    child: Text(e),
+                    value: e,
+                  ),
+                )
+                .toList(),
+            hint: ShowText(
+              label: MyConstant.appName,
+              textStyle: MyConstant().h2WhiteStyle(),
+            ),
+            onChanged: (value) {
+              if (value == titles[1]) {
+                print('Process SignOut');
+                processSignOut();
+              }
+            }),
         foregroundColor: Colors.white,
         backgroundColor: Colors.black,
         actions: [
@@ -161,5 +184,16 @@ class _MainHomeState extends State<MainHome> {
               );
             }),
     );
+  }
+
+  Future<void> processSignOut() async {
+    await FirebaseAuth.instance.signOut().then((value) {
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const Authen(),
+          ),
+          (route) => false);
+    });
   }
 }

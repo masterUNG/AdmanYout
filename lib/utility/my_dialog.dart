@@ -16,7 +16,7 @@ class MyDialog {
       required Function() pressFunc}) async {
     showDialog(
       context: context,
-      builder: (BuildContext context) => AlertDialog(
+      builder: (BuildContext context) => AlertDialog(backgroundColor: Colors.black.withOpacity(0.75),
         title: ListTile(
           leading: Icon(
             Icons.error,size: 48,

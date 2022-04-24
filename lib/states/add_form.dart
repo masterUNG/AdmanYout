@@ -63,7 +63,7 @@ class _AddFormState extends State<AddForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey,
+      backgroundColor: Colors.black,
       appBar: AppBar(
         actions: [
           ShowIconButton(
@@ -125,7 +125,7 @@ class _AddFormState extends State<AddForm> {
                   children: widgetLinks,
                 ),
                 ShowButton(
-                    label: 'เพิ่มลิ้ง',
+                    label: 'Link URL +',
                     pressFunc: () {
                       indexTextFromField++;
                       setState(() {
@@ -155,7 +155,9 @@ class _AddFormState extends State<AddForm> {
         onChanged: (value) {
           links[index] = value.trim();
         },
-        decoration: InputDecoration(),
+        decoration: InputDecoration(
+          enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+        ),
       ),
     );
   }

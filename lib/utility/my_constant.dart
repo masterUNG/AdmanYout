@@ -8,7 +8,7 @@ class MyConstant {
 
   static Color primary = const Color.fromARGB(255, 28, 111, 165);
   static Color light = const Color.fromARGB(255, 92, 92, 218);
-  static Color dark = const Color.fromARGB(255, 25, 25, 60);
+  static Color dark = Colors.white;
 
   TextStyle h1Style() => TextStyle(
         fontSize: 36,
@@ -32,6 +32,12 @@ class MyConstant {
         fontSize: 14,
         color: dark,
         fontWeight: FontWeight.normal,
+      );
+
+      TextStyle h3ActionStyle() => const TextStyle(
+        fontSize: 14,
+        color: Colors.lime,
+        fontWeight: FontWeight.w500,
       );
 
   TextStyle h3WhiteStyle() => const TextStyle(

@@ -25,7 +25,8 @@ class ShowForm extends StatelessWidget {
       margin: const EdgeInsets.only(top: 16),
       width: width ?? 250,
       height: 40,
-      child: TextFormField(obscureText: obscub ?? false,
+      child: TextFormField(style: MyConstant().h2WhiteStyle(),
+        obscureText: obscub ?? false,
         onChanged: changeFunc,
         decoration: InputDecoration(
           contentPadding:
