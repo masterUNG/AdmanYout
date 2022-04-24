@@ -29,7 +29,11 @@ class _MainHomeState extends State<MainHome> {
   }
 
   Future<void> readPost() async {
-    await FirebaseFirestore.instance.collection('post').get().then((value) {
+    await FirebaseFirestore.instance
+        .collection('post')
+        .orderBy('timePost', descending: true)
+        .get()
+        .then((value) {
       for (var item in value.docs) {
         PostModel postModel = PostModel.fromMap(item.data());
         postModels.add(postModel);

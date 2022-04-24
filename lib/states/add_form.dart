@@ -1,10 +1,13 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first, prefer_const_constructors
+// ignore_for_file: public_member_api_docs, sort_constructors_first, prefer_const_constructors, avoid_print
+import 'package:admanyout/models/post_model.dart';
+import 'package:admanyout/models/user_model.dart';
 import 'package:admanyout/states/main_home.dart';
 import 'package:admanyout/utility/my_constant.dart';
 import 'package:admanyout/widgets/show_button.dart';
 import 'package:admanyout/widgets/show_form.dart';
 import 'package:admanyout/widgets/show_icon_button.dart';
-import 'package:admanyout/widgets/show_text.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:admanyout/models/photo_model.dart';
@@ -24,14 +27,37 @@ class _AddFormState extends State<AddForm> {
   var photoModels = <PhotoModel>[];
   var widgetLinks = <Widget>[];
   var links = <String>[];
+  var urlPath = <String>[];
 
   int indexTextFromField = 0;
+  String article = '', nameButton = 'กดปุ่ม';
+  String? uidPost, name;
 
   @override
   void initState() {
     super.initState();
     photoModels = widget.photoModels;
     widgetLinks.add(createTextFromFiew(indexTextFromField));
+
+    for (var item in photoModels) {
+      urlPath.add(item.urlPhoto);
+    }
+
+    findUserLogin();
+  }
+
+  Future<void> findUserLogin() async {
+    var user = FirebaseAuth.instance.currentUser;
+    uidPost = user!.uid;
+
+    await FirebaseFirestore.instance
+        .collection('user')
+        .doc(uidPost)
+        .get()
+        .then((value) {
+      UserModel userModel = UserModel.fromMap(value.data()!);
+      name = userModel.name;
+    });
   }
 
   @override
@@ -42,8 +68,38 @@ class _AddFormState extends State<AddForm> {
         actions: [
           ShowIconButton(
               iconData: Icons.check,
-              pressFunc: () {
-                print('links ===>> $links');
+              pressFunc: () async {
+                // print(
+                //     'uidPost ==> $uidPost, artical ==> $article, nameButton = => $nameButton');
+                // print('links ===>> $links');
+                // print('urlPath ==> $urlPath');
+
+                DateTime dateTime = DateTime.now();
+                Timestamp timePost = Timestamp.fromDate(dateTime);
+
+                PostModel postModel = PostModel(
+                    uidPost: uidPost!,
+                    urlPaths: urlPath,
+                    article: article,
+                    link: links,
+                    nameButton: nameButton,
+                    name: name!,
+                    timePost: timePost);
+
+                print('postModel ==>> ${postModel.toMap()}');
+
+                await FirebaseFirestore.instance
+                    .collection('post')
+                    .doc()
+                    .set(postModel.toMap())
+                    .then((value) {
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const MainHome(),
+                      ),
+                      (route) => false);
+                });
               })
         ],
         leading: ShowIconButton(
@@ -76,8 +132,13 @@ class _AddFormState extends State<AddForm> {
                         widgetLinks.add(createTextFromFiew(indexTextFromField));
                       });
                     }),
-                   
-                     ShowForm(label: 'ชื่อปุ่ม', iconData: Icons.bookmark, changeFunc: (String string){}),
+                ShowForm(
+                  label: 'ชื่อปุ่ม',
+                  iconData: Icons.bookmark,
+                  changeFunc: (String string) {
+                    nameButton = string.trim();
+                  },
+                ),
               ],
             ),
           ),
@@ -110,6 +171,9 @@ class _AddFormState extends State<AddForm> {
         SizedBox(
           width: constraints.maxWidth * 0.5,
           child: TextFormField(
+            onChanged: (value) {
+              article = value.trim();
+            },
             maxLines: 10,
             keyboardType: TextInputType.multiline,
             style: MyConstant().h3WhiteStyle(),
