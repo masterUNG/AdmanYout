@@ -10,6 +10,7 @@ class ShowForm extends StatelessWidget {
   final IconData iconData;
   final Function(String) changeFunc;
   final bool? obscub;
+  final TextInputType? textInputType;
   const ShowForm({
     Key? key,
     this.width,
@@ -17,6 +18,7 @@ class ShowForm extends StatelessWidget {
     required this.iconData,
     required this.changeFunc,
     this.obscub,
+    this.textInputType,
   }) : super(key: key);
 
   @override
@@ -25,7 +27,9 @@ class ShowForm extends StatelessWidget {
       margin: const EdgeInsets.only(top: 16),
       width: width ?? 250,
       height: 40,
-      child: TextFormField(style: MyConstant().h2WhiteStyle(),
+      child: TextFormField(
+        keyboardType: textInputType ?? TextInputType.text,
+        style: MyConstant().h2WhiteStyle(),
         obscureText: obscub ?? false,
         onChanged: changeFunc,
         decoration: InputDecoration(

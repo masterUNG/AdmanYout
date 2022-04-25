@@ -37,7 +37,7 @@ class _AuthenState extends State<Authen> {
                   textStyle: MyConstant().h1Style(),
                 ),
               ),
-              ShowForm(
+              ShowForm(textInputType: TextInputType.emailAddress,
                 label: 'Email :',
                 iconData: Icons.email_outlined,
                 changeFunc: (String string) => email = string.trim(),
