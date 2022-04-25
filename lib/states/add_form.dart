@@ -28,6 +28,7 @@ class _AddFormState extends State<AddForm> {
   var widgetLinks = <Widget>[];
   var links = <String>[];
   var urlPath = <String>[];
+  var nameLinks = <String>[];
 
   int indexTextFromField = 0;
   String article = '', nameButton = 'กดปุ่ม';
@@ -78,13 +79,15 @@ class _AddFormState extends State<AddForm> {
                 Timestamp timePost = Timestamp.fromDate(dateTime);
 
                 PostModel postModel = PostModel(
-                    uidPost: uidPost!,
-                    urlPaths: urlPath,
-                    article: article,
-                    link: links,
-                    nameButton: nameButton,
-                    name: name!,
-                    timePost: timePost);
+                  uidPost: uidPost!,
+                  urlPaths: urlPath,
+                  article: article,
+                  link: links,
+                  nameButton: nameButton,
+                  name: name!,
+                  timePost: timePost,
+                  nameLink: nameLinks,
+                );
 
                 print('postModel ==>> ${postModel.toMap()}');
 
@@ -149,16 +152,52 @@ class _AddFormState extends State<AddForm> {
 
   Widget createTextFromFiew(int index) {
     links.add('');
-    return SizedBox(
-      width: 250,
-      child: TextFormField(
-        onChanged: (value) {
-          links[index] = value.trim();
-        },
-        decoration: InputDecoration(
-          enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+    nameLinks.add('');
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        // link
+        SizedBox(
+          width: 120,
+          child: TextFormField(
+            style: MyConstant().h3WhiteStyle(),
+            onChanged: (value) {
+              try {
+                int testNum = int.parse(value);
+                print('นี่คือ ตัวเลข');
+                 links[index] = 'tel:${value.trim()}';
+              } catch (e) {
+                print('นี่ีืคือ ตัวอักษร');
+                 links[index] = 'https://${value.trim()}';
+              }
+
+              // links[index] = value.trim();
+            },
+            decoration: InputDecoration(
+              hintStyle: MyConstant().h2WhiteStyle(),
+              hintText: 'Link url',
+              enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white)),
+            ),
+          ),
         ),
-      ),
+        // name
+        SizedBox(
+          width: 120,
+          child: TextFormField(
+            style: MyConstant().h3WhiteStyle(),
+            onChanged: (value) {
+              nameLinks[index] = value.trim();
+            },
+            decoration: InputDecoration(
+              hintStyle: MyConstant().h2WhiteStyle(),
+              hintText: 'Name Link',
+              enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white)),
+            ),
+          ),
+        ),
+      ],
     );
   }
 

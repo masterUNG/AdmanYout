@@ -2,6 +2,7 @@ import 'package:admanyout/models/post_model.dart';
 import 'package:admanyout/states/add_photo.dart';
 import 'package:admanyout/states/authen.dart';
 import 'package:admanyout/utility/my_constant.dart';
+import 'package:admanyout/utility/my_dialog.dart';
 import 'package:admanyout/widgets/shop_progress.dart';
 import 'package:admanyout/widgets/show_button.dart';
 import 'package:admanyout/widgets/show_icon_button.dart';
@@ -11,6 +12,7 @@ import 'package:admanyout/widgets/show_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MainHome extends StatefulWidget {
   const MainHome({Key? key}) : super(key: key);
@@ -52,6 +54,7 @@ class _MainHomeState extends State<MainHome> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
+        centerTitle: true,
         title: DropdownButton<dynamic>(
             value: title,
             items: titles
@@ -170,7 +173,9 @@ class _MainHomeState extends State<MainHome> {
                         ),
                         ShowOutlineButton(
                             label: postModels[index].nameButton,
-                            pressFunc: () {}),
+                            pressFunc: () {
+                              processClickButton(postModel: postModels[index]);
+                            }),
                       ],
                     ),
                     const SizedBox(
@@ -195,5 +200,49 @@ class _MainHomeState extends State<MainHome> {
           ),
           (route) => false);
     });
+  }
+
+  Future<void> processClickButton({required PostModel postModel}) async {
+    var widgets = <Widget>[];
+
+    int index = 0;
+    for (var item in postModel.link) {
+      widgets.add(
+        ShowButton(
+          label: postModel.nameLink[index],
+          pressFunc: () async {
+            if (await canLaunch(item)) {
+              await launch(item);
+            } else {
+              MyDialog(context: context).normalActionDilalog(
+                  title: 'Cannot Launch',
+                  message: 'Link False',
+                  label: 'OK',
+                  pressFunc: () => Navigator.pop(context));
+            }
+          },
+        ),
+      );
+      index++;
+    }
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        backgroundColor: Colors.black,
+        title: ListTile(
+          leading: const ShowImage(),
+          title: ShowText(
+            label: 'Link',
+            textStyle: MyConstant().h2Style(),
+          ),
+        ),
+        content: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: widgets,
+        ),
+      ),
+    );
   }
 }

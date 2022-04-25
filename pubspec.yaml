@@ -40,6 +40,7 @@ dependencies:
   firebase_storage: ^10.2.12
   firebase_messaging: ^11.2.13
   image_picker: ^0.8.5
+  url_launcher: ^6.1.0
 
 dev_dependencies:
   flutter_test:

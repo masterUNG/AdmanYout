@@ -12,6 +12,7 @@ class PostModel {
   final String nameButton;
   final String name;
   final Timestamp timePost;
+  final List<String> nameLink;
 
   PostModel({
     required this.uidPost,
@@ -21,6 +22,7 @@ class PostModel {
     required this.nameButton,
     required this.name,
     required this.timePost,
+    required this.nameLink,
   });
 
   Map<String, dynamic> toMap() {
@@ -32,18 +34,20 @@ class PostModel {
       'nameButton': nameButton,
       'name': name,
       'timePost': timePost,
+      'nameLink': nameLink,
     };
   }
 
   factory PostModel.fromMap(Map<String, dynamic> map) {
     return PostModel(
-      uidPost: (map['uidPost'] ?? '') as String,
+       uidPost: (map['uidPost'] ?? '') as String,
       urlPaths: List<String>.from(map['urlPaths']),
       article: (map['article'] ?? '') as String,
       link: List<String>.from(map['link']),
       nameButton: (map['nameButton'] ?? '') as String,
       name: (map['name'] ?? '') as String,
       timePost: (map['timePost']),
+      nameLink: List<String>.from(map['nameLink'] ?? []),
     );
   }
 
@@ -57,3 +61,6 @@ class PostModel {
       // link: List<String>.from(map['link']),
       // nameButton: (map['nameButton'] ?? '') as String,
       // name: (map['name'] ?? '') as String,
+      // timePost: (map['timePost']),
+
+     
