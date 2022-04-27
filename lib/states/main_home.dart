@@ -1,6 +1,8 @@
 import 'package:admanyout/models/post_model.dart';
+import 'package:admanyout/models/special_model.dart';
 import 'package:admanyout/states/add_photo.dart';
 import 'package:admanyout/states/authen.dart';
+import 'package:admanyout/states/key_special.dart';
 import 'package:admanyout/utility/my_constant.dart';
 import 'package:admanyout/utility/my_dialog.dart';
 import 'package:admanyout/widgets/shop_progress.dart';
@@ -9,9 +11,11 @@ import 'package:admanyout/widgets/show_icon_button.dart';
 import 'package:admanyout/widgets/show_image.dart';
 import 'package:admanyout/widgets/show_outline_button.dart';
 import 'package:admanyout/widgets/show_text.dart';
+import 'package:badges/badges.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MainHome extends StatefulWidget {
@@ -24,6 +28,7 @@ class MainHome extends StatefulWidget {
 class _MainHomeState extends State<MainHome> {
   var user = FirebaseAuth.instance.currentUser;
   var postModels = <PostModel>[];
+  var docIdPosts = <String>[];
   bool load = true;
   var titles = <String>['แก้ไขโปรไฟร์', 'Sign Out'];
   String? title;
@@ -43,6 +48,7 @@ class _MainHomeState extends State<MainHome> {
       for (var item in value.docs) {
         PostModel postModel = PostModel.fromMap(item.data());
         postModels.add(postModel);
+        docIdPosts.add(item.id);
       }
       load = false;
       setState(() {});
@@ -163,7 +169,7 @@ class _MainHomeState extends State<MainHome> {
                               ),
                             ),
                             SizedBox(
-                              width: constraints.maxWidth * 0.5,
+                              width: constraints.maxWidth * 0.5 - 60,
                               child: ShowText(
                                 label: postModels[index].article,
                                 textStyle: MyConstant().h3WhiteStyle(),
@@ -171,11 +177,92 @@ class _MainHomeState extends State<MainHome> {
                             ),
                           ],
                         ),
-                        ShowOutlineButton(
-                            label: postModels[index].nameButton,
+                        Badge(
+                          badgeContent: ShowText(label: '0'),
+                          child: ShowIconButton(
+                            iconData: Icons.add_circle_outline,
                             pressFunc: () {
-                              processClickButton(postModel: postModels[index]);
-                            }),
+                              print('บวก docIdPost ==>> ${docIdPosts[index]}');
+                              processVotePost(
+                                  docIdPost: docIdPosts[index], score: true);
+                            },
+                          ),
+                        ),
+                        Badge(
+                          badgeContent: ShowText(label: '2'),
+                          child: ShowIconButton(
+                            iconData: Icons.remove_circle_outline,
+                            pressFunc: () {
+                              print('ลบ  docIdPost ==>> ${docIdPosts[index]}');
+                              processVotePost(
+                                  docIdPost: docIdPosts[index], score: false);
+                            },
+                          ),
+                        ),
+                        Column(
+                          children: [
+                            ShowOutlineButton(
+                                label: postModels[index].nameButton,
+                                pressFunc: () {
+                                  processClickButton(
+                                      postModel: postModels[index]);
+                                }),
+                            ShowButton(
+                                label: 'Special',
+                                pressFunc: () async {
+                                  SharedPreferences preferences =
+                                      await SharedPreferences.getInstance();
+                                  var result = preferences.getString('special');
+                                  print('result ==> $result');
+                                  if (result?.isEmpty ?? true) {
+                                    MyDialog(context: context)
+                                        .normalActionDilalog(
+                                            title: 'ต้องการ Key Special',
+                                            message:
+                                                'คุณต้องกรองค่า key Special',
+                                            label: 'กรอก key Spectial',
+                                            pressFunc: () {
+                                              Navigator.pop(context);
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        const KeySpecial(),
+                                                  ));
+                                            });
+                                  } else {
+                                    var specialModels = <SpecialModel>[];
+                                    await FirebaseFirestore.instance
+                                        .collection('user')
+                                        .doc(user!.uid)
+                                        .collection('special')
+                                        .orderBy('expire', descending: true)
+                                        .get()
+                                        .then((value) {
+                                      for (var item in value.docs) {
+                                        SpecialModel specialModel =
+                                            SpecialModel.fromMap(item.data());
+                                        specialModels.add(specialModel);
+                                      }
+                                      if (result == specialModels[0].key) {
+                                        print('สามารถใช้ Special');
+                                      } else {
+                                        MyDialog(context: context)
+                                            .normalActionDilalog(
+                                                title: 'key error',
+                                                message:
+                                                    'ไม่สามารถใช้ special ได้',
+                                                label: 'OK',
+                                                pressFunc: () {
+                                                  Navigator.pop(context);
+                                                });
+                                        ;
+                                      }
+                                    });
+                                  }
+                                }),
+                          ],
+                        ),
                       ],
                     ),
                     const SizedBox(
@@ -244,5 +331,10 @@ class _MainHomeState extends State<MainHome> {
         ),
       ),
     );
+  }
+
+  Future<void> processVotePost(
+      {required String docIdPost, required bool score}) async {
+    print('docIdPost ==>> $docIdPost, score ==> $score');
   }
 }
