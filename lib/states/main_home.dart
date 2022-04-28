@@ -177,28 +177,28 @@ class _MainHomeState extends State<MainHome> {
                             ),
                           ],
                         ),
-                        Badge(
-                          badgeContent: ShowText(label: '0'),
-                          child: ShowIconButton(
-                            iconData: Icons.add_circle_outline,
-                            pressFunc: () {
-                              print('บวก docIdPost ==>> ${docIdPosts[index]}');
-                              processVotePost(
-                                  docIdPost: docIdPosts[index], score: true);
-                            },
-                          ),
-                        ),
-                        Badge(
-                          badgeContent: ShowText(label: '2'),
-                          child: ShowIconButton(
-                            iconData: Icons.remove_circle_outline,
-                            pressFunc: () {
-                              print('ลบ  docIdPost ==>> ${docIdPosts[index]}');
-                              processVotePost(
-                                  docIdPost: docIdPosts[index], score: false);
-                            },
-                          ),
-                        ),
+                        // Badge(
+                        //   badgeContent: ShowText(label: '0'),
+                        //   child: ShowIconButton(
+                        //     iconData: Icons.add_circle_outline,
+                        //     pressFunc: () {
+                        //       print('บวก docIdPost ==>> ${docIdPosts[index]}');
+                        //       processVotePost(
+                        //           docIdPost: docIdPosts[index], score: true);
+                        //     },
+                        //   ),
+                        // ),
+                        // Badge(
+                        //   badgeContent: ShowText(label: '2'),
+                        //   child: ShowIconButton(
+                        //     iconData: Icons.remove_circle_outline,
+                        //     pressFunc: () {
+                        //       print('ลบ  docIdPost ==>> ${docIdPosts[index]}');
+                        //       processVotePost(
+                        //           docIdPost: docIdPosts[index], score: false);
+                        //     },
+                        //   ),
+                        // ),
                         Column(
                           children: [
                             ShowOutlineButton(
@@ -207,60 +207,7 @@ class _MainHomeState extends State<MainHome> {
                                   processClickButton(
                                       postModel: postModels[index]);
                                 }),
-                            ShowButton(
-                                label: 'Special',
-                                pressFunc: () async {
-                                  SharedPreferences preferences =
-                                      await SharedPreferences.getInstance();
-                                  var result = preferences.getString('special');
-                                  print('result ==> $result');
-                                  if (result?.isEmpty ?? true) {
-                                    MyDialog(context: context)
-                                        .normalActionDilalog(
-                                            title: 'ต้องการ Key Special',
-                                            message:
-                                                'คุณต้องกรองค่า key Special',
-                                            label: 'กรอก key Spectial',
-                                            pressFunc: () {
-                                              Navigator.pop(context);
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        const KeySpecial(),
-                                                  ));
-                                            });
-                                  } else {
-                                    var specialModels = <SpecialModel>[];
-                                    await FirebaseFirestore.instance
-                                        .collection('user')
-                                        .doc(user!.uid)
-                                        .collection('special')
-                                        .orderBy('expire', descending: true)
-                                        .get()
-                                        .then((value) {
-                                      for (var item in value.docs) {
-                                        SpecialModel specialModel =
-                                            SpecialModel.fromMap(item.data());
-                                        specialModels.add(specialModel);
-                                      }
-                                      if (result == specialModels[0].key) {
-                                        print('สามารถใช้ Special');
-                                      } else {
-                                        MyDialog(context: context)
-                                            .normalActionDilalog(
-                                                title: 'key error',
-                                                message:
-                                                    'ไม่สามารถใช้ special ได้',
-                                                label: 'OK',
-                                                pressFunc: () {
-                                                  Navigator.pop(context);
-                                                });
-                                        ;
-                                      }
-                                    });
-                                  }
-                                }),
+                            //  specialButton(context),
                           ],
                         ),
                       ],
@@ -276,6 +223,63 @@ class _MainHomeState extends State<MainHome> {
               );
             }),
     );
+  }
+
+ Widget specialButton(BuildContext context)  {
+    return ShowButton(
+                              label: 'Special',
+                              pressFunc: () async {
+                                SharedPreferences preferences =
+                                    await SharedPreferences.getInstance();
+                                var result = preferences.getString('special');
+                                print('result ==> $result');
+                                if (result?.isEmpty ?? true) {
+                                  MyDialog(context: context)
+                                      .normalActionDilalog(
+                                          title: 'ต้องการ Key Special',
+                                          message:
+                                              'คุณต้องกรองค่า key Special',
+                                          label: 'กรอก key Spectial',
+                                          pressFunc: () {
+                                            Navigator.pop(context);
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const KeySpecial(),
+                                                ));
+                                          });
+                                } else {
+                                  var specialModels = <SpecialModel>[];
+                                  await FirebaseFirestore.instance
+                                      .collection('user')
+                                      .doc(user!.uid)
+                                      .collection('special')
+                                      .orderBy('expire', descending: true)
+                                      .get()
+                                      .then((value) {
+                                    for (var item in value.docs) {
+                                      SpecialModel specialModel =
+                                          SpecialModel.fromMap(item.data());
+                                      specialModels.add(specialModel);
+                                    }
+                                    if (result == specialModels[0].key) {
+                                      print('สามารถใช้ Special');
+                                    } else {
+                                      MyDialog(context: context)
+                                          .normalActionDilalog(
+                                              title: 'key error',
+                                              message:
+                                                  'ไม่สามารถใช้ special ได้',
+                                              label: 'OK',
+                                              pressFunc: () {
+                                                Navigator.pop(context);
+                                              });
+                                      ;
+                                    }
+                                  });
+                                }
+                              });
   }
 
   Future<void> processSignOut() async {
