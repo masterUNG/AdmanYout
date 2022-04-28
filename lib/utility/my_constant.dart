@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class MyConstant {
-  static String appName = 'ADMAN';
+  static String appName = 'LINKMAN';
 
   static String routeAuthen = '/authen';
   static String rountMainHome = '/mainHome';
